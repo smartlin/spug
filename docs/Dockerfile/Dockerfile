@@ -9,7 +9,12 @@ RUN apk update && apk add --no-cache  nodejs-npm git build-base openldap-dev sup
 RUN apk add --no-cache --virtual .build-deps  openssl-dev gcc musl-dev python3-dev libffi-dev make \
     && mkdir /etc/supervisor.d
 
-RUN git clone https://github.com/openspug/spug.git --depth=1 /spug && cd /spug && git pull
+RUN curl https://static.rust-lang.org/rustup/dist/x86_64-unknown-linux-musl/rustup-init --output /tmp/rustup-init \
+    && chmod +x /tmp/rustup-init \
+    && /tmp/rustup-init -y \
+
+RUN #git clone https://github.com/openspug/spug.git --depth=1 /spug && cd /spug && git pull
+RUN git clone https://github.com/smartlin/spug.git --depth=1 /spug && cd /spug && git pull
 
 RUN pip config set global.index-url https://mirrors.aliyun.com/pypi/simple/  && pip install --upgrade pip &&  pip install wheel && pip wheel -r /spug/spug_api/requirements.txt  --wheel-dir=/pippacks/wheels \
     && pip wheel gunicorn --wheel-dir=/pippacks/wheels \
